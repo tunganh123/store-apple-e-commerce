@@ -1,0 +1,16 @@
+.checkoutpage {
+    margin: 30px 50px;
+    margin-top: 0px;
+}
+
+.checkoutpage .cartproduct_total .subtotal,
+.checkoutpage .total {
+    padding: auto 1rem;
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    column-gap: 1rem;
+}
+
+.inputlabl {
+    margin-bottom: 1.5rem;
+}

@@ -1,0 +1,29 @@
+.navvv {
+    position: relative;
+}
+
+#navbarr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 50px;
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+#navbarr a {
+    color: rgb(48, 46, 45);
+    text-decoration: none;
+    margin: 5px;
+}
+
+.nameshop {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#navbarr a.active {
+    color: rgb(231, 179, 36);
+}

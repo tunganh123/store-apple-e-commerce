@@ -1,0 +1,39 @@
+.detailpage {
+    margin: 30px 50px;
+    margin-top: 0px;
+    padding-right: 4rem
+}
+
+.detailpage .popup img {
+    width: 100%;
+    height: auto;
+}
+
+.oder {
+    display: flex;
+
+}
+
+.cartoder {
+    position: relative;
+    margin-right: 0.5rem;
+
+
+}
+
+.floatbtn {
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    right: 0.2rem;
+}
+
+.floatbtn button {
+    border: none;
+    background-color: white;
+}
+
+.related {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}

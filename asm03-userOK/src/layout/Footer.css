@@ -1,0 +1,53 @@
+.message-container {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+#footerr {
+    background-color: black;
+    color: white;
+
+}
+
+#footerr .container .text-white {
+    color: rgb(197, 197, 197) !important;
+}
+
+#footerr a {
+    text-decoration: none;
+}
+
+#footerr .container .row .col-4 {
+    /* margin: auto 10px; */
+}
+
+.container .row .text-uppercase {
+    margin-bottom: 20px !important;
+}
+
+.container .row .list-unstyled {
+    display: flex;
+    flex-direction: column;
+    line-height: 2;
+    justify-content: space-between;
+}
+
+.messenger {
+    box-sizing: border-box;
+    position: fixed;
+    bottom: 10rem;
+    right: 4rem;
+    border: none;
+    padding: 0;
+}
+
+#support {
+    position: fixed;
+    right: 10rem;
+    bottom: 20%;
+    z-index: 10;
+    background-color: white;
+
+}

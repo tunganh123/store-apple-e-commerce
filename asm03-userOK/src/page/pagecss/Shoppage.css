@@ -1,0 +1,84 @@
+.shoppage {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    margin: 30px 50px;
+    margin-top: 0px;
+}
+
+.shoppage .navbarshop {
+    grid-column: 1/2;
+    width: 70%;
+}
+
+.shoppage .navbarshop .nav-item {
+    padding: 10px 20px;
+}
+
+.shoppage .navbarshop .nav-link {
+    padding: 0px;
+}
+
+.shoppage .navbarshop .title {
+    background-color: #f8f8f8;
+}
+
+.shoppage a {
+    color: rgb(48, 46, 45);
+    text-decoration: none;
+
+}
+
+.shoppage a.active {
+    color: rgb(231, 179, 36);
+}
+
+.activ {
+    color: rgb(231, 179, 36) !important;
+}
+
+.shoppage .content {
+    grid-column: 2/-1;
+    position: relative;
+    padding: 20px 30px;
+}
+
+.shoppage .content .contentnav {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.contentitem {
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+
+}
+
+.floatitem {
+    position: absolute;
+    text-align: center;
+    bottom: 1rem;
+    right: 1rem;
+}
+
+.contentitem label {
+    height: 2rem;
+    background-color: black;
+    color: white;
+    padding: 5px 10px;
+    margin: auto 5px;
+}
+
+.contentitem button {
+    height: 2rem;
+    background-color: white;
+    border: 1px solid black;
+}
+
+.contentitem img {
+    width: 100%;
+    height: 100%;
+}
