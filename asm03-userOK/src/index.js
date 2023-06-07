@@ -10,7 +10,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 
 library.add(fas);
-export const url_be = "https://be-mobile-ecommerce.herokuapp.com";
+export const url_be = "https://asm3-beok.onrender.com";
 export const linkfetch = `${url_be}/getproduct`;
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
