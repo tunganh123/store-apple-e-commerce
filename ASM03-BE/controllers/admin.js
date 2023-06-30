@@ -10,15 +10,25 @@ const storage = multer.diskStorage({
     cb(null, "public/img");
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const uniqueSuffix = Date.now() + "-";
     cb(null, file.fieldname + "-" + uniqueSuffix + file.originalname);
+  },
+});
+const storagechat = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public/img");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
   },
 });
 function fileFilter(req, file, cb) {
   if (
     file.mimetype == "image/png" ||
     file.mimetype == "image/jpg" ||
-    file.mimetype == "image/jpeg"
+    file.mimetype == "image/jpeg" ||
+    file.mimetype == "video/mp4" ||
+    file.mimetype == "video/mpeg"
   ) {
     cb(null, true);
   } else {
@@ -31,7 +41,12 @@ const upload = multer({
   fileFilter: fileFilter,
   // limits: { files: 4 },
 }).array("img", 4);
-exports.upload = upload;
+const uploadimgchat = multer({
+  storage: storagechat,
+  fileFilter: fileFilter,
+  limits: { fileSize: 20 * 1024 * 1024 }, // Giới hạn dung lượng tệp là 20MB
+}).single("imgchat");
+// exports.upload = upload;
 
 const getalltransaction = async (req, res) => {
   try {
@@ -185,12 +200,22 @@ const deletesession = async (req, res) => {
     console.log(error);
   }
 };
-
+const saveimgchat = async (req, res) => {
+  uploadimgchat(req, res, async (err) => {
+    try {
+      if (err) {
+        throw new Error(err);
+      }
+      res.json({ a: "b" });
+    } catch (error) {
+      res.json({ err: error.message });
+    }
+  });
+};
 module.exports = {
   getalltransaction,
   getallproduct,
   addproduct,
-  upload,
   detailproduct,
   updatedetail,
   deletedetail,
@@ -198,4 +223,5 @@ module.exports = {
   adminlogout,
   livechat,
   deletesession,
+  saveimgchat,
 };

@@ -13,6 +13,7 @@ const {
   adminlogout,
   livechat,
   deletesession,
+  saveimgchat,
 } = require("../controllers/admin");
 //get all transaction
 router.post("/adminlogin", adminlogin);
@@ -34,4 +35,6 @@ router.delete("/deletedetail/:idproduct", deletedetail);
 router.get("/livechat", authsupporter, livechat);
 //livechat
 router.post("/deletesession", deletesession);
+//save img chat
+router.post("/saveimgchat", saveimgchat);
 module.exports = router;

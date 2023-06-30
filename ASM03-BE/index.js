@@ -9,8 +9,6 @@ const path = require("path");
 require("dotenv").config();
 const cors = require("cors");
 const corsoption = {
-  // origin: [process.env.URL_USER, process.env.URL_ADMIN],
-  //origin: ["https://asm-3-user.vercel.app,"http://localhost:3000"]
   origin: [
     "https://asm-3-user.vercel.app",
     "https://asm3-admin.onrender.com",
@@ -23,7 +21,6 @@ const corsoption = {
 };
 const mongoose = require("mongoose");
 const cookieparser = require("cookie-parser");
-const session = require("./models/session");
 const app = express();
 // initialization
 /////////////////////////////////////////////
@@ -80,8 +77,10 @@ mongoose
         }
         io.emit("getmess", sessionitem.message);
       });
+      let sescheck;
       socket.on("setsession", async (data) => {
         // console.log(`user ${socket.id} join ${data.session}`);
+        sescheck = data.session;
         const sessionitem = new Session(data);
         socket.join(data.session);
         await sessionitem.save();
@@ -116,6 +115,36 @@ mongoose
           console.log(error);
         }
       });
+      // Lắng nghe sự kiện gửi hình ảnh từ client
+      socket.on("uploadImage", async (data) => {
+        try {
+          const sessionitem = await Session.findOne({ session: data.sess });
+          if (sessionitem) {
+            let datamess = {
+              mess: data.mess,
+              user: {
+                fullname: data.user.fullname,
+              },
+            };
+            let newmess = [...sessionitem.message, datamess];
+            const sessitem = await Session.findOneAndUpdate(
+              { session: data.sess },
+              {
+                message: newmess,
+              }
+            );
+          }
+          let dataok = {
+            mess: data.mess,
+            user: {
+              fullname: data.user.fullname,
+            },
+          };
+          socket.to(data.sess).emit("getimg", dataok);
+        } catch (error) {
+          console.log(error);
+        }
+      });
       // remove session
       socket.on("removesession", async (data) => {
         try {
@@ -130,6 +159,25 @@ mongoose
           io.emit("user-leave", sessok);
           const bolen = await Session.findOneAndRemove({ session: data });
           socket.leave(data);
+          if (!bolen) {
+            throw new Error();
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      });
+      socket.on("disconnect", async () => {
+        try {
+          const allsess = await Session.find();
+          const sessfilter = allsess.filter((item) => item.session != sescheck);
+          const sessitem = allsess.find((it) => it.session == sescheck);
+          let sessok = {
+            sessfilter: sessfilter,
+            session: sessitem?.session,
+          };
+          io.emit("user-leave", sessok);
+          const bolen = await Session.findOneAndRemove({ session: sescheck });
+          socket.leave(sescheck);
           if (!bolen) {
             throw new Error();
           }

@@ -22,8 +22,26 @@ const Livechat = () => {
     const [statemess, setstatemess] = useState([])
     // Noi dung tin nhan tu the input
     const [stateinput, setinput] = useState("")
+    // show/not show enmoji
+    const [statecheckemoji, setcheckemoji] = useState(false)
+    // refimg
+    const refimg = useRef()
     // connect socketio
     const socket = io.connect(process.env.REACT_APP_URL_FETCH)
+
+    // enmoji
+    const emojis = [
+        '😀', '😃', '😄', '😁',
+        '😆', '😅', '😂', '🤣',
+        '😊', '😇', '🙂', '🙃',
+        '😉', '😌', '😍', '😝',
+        '😜', '🧐', '🤓', '😎',
+        '😕', '🤑', '🥴', '😱'
+    ]
+    // set input emoji
+    const senemoji = (e) => {
+        setinput(`${stateinput}` + e)
+    }
     // Khi click vao 1 session
     const clickshowsession = async (data) => {
         let datanew = {
@@ -78,6 +96,11 @@ const Livechat = () => {
             setstatemess((prev) => [...prev, dat])
         }
     })
+    socket.on("getimg", (dat) => {
+        if (dat.user.fullname != "supporter") {
+            setstatemess((prev) => [...prev, dat])
+        }
+    })
     // Nhan tin nhan tu phia client
     let datasupport = {
         sess: statesess,
@@ -99,6 +122,74 @@ const Livechat = () => {
             setinput("")
             await socket.emit("sendmess", datasupport)
         }
+    }
+    // upload img
+    const changeuploadfile = (event) => {
+        const file = event.target.files[0];
+        let newfilename;
+        if (file.type.includes("video")) {
+            newfilename = "videochat" + "-" + Date.now() + "-" + file.name
+        } else {
+            newfilename = "imgchat" + "-" + Date.now() + "-" + file.name
+        }
+        const newfile = new File([file], newfilename, { type: file.type });
+        const formData = new FormData();
+        formData.append('imgchat', newfile);
+        const fetchdata = async () => {
+            try {
+                const result = await fetch(`${process.env.REACT_APP_URL_FETCH}/saveimgchat`, {
+                    method: "POST",
+                    body: formData,
+                })
+                const a = await result.json()
+                if (a.err) {
+                    alert(a.err)
+                    return
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchdata()
+        const reader = new FileReader();
+        reader.onload = () => {
+
+            let data = {
+                mess: reader.result,
+                sess: statesess,
+                user: {
+                    fullname: "supporter"
+                }
+            };
+            setstatemess((prev) => [...prev, data])
+        }
+        //     // Set data để gửi tn
+        let data = {
+            mess: newfilename,
+            sess: statesess,
+            user: {
+                fullname: "supporter"
+            }
+        };
+        socket.emit('uploadImage', data);
+        reader.readAsDataURL(file);
+    }
+    function rendercontent(mes) {
+        if (mes.mess.includes("imgchat") || mes.mess.includes("base64") || mes.mess.includes("videochat")) {
+            if (mes.mess.includes("imgchat")) {
+                return <img style={{ width: "10rem", height: "10rem" }} src={`${process.env.REACT_APP_URL_FETCH}/public/img/${mes.mess}`} alt="" />
+            }
+            if (mes.mess.includes("videochat")) {
+                return <video controls style={{ width: "10rem", height: "10rem" }} src={`${process.env.REACT_APP_URL_FETCH}/public/img/${mes.mess}`}></video>
+            }
+            if (mes.mess.includes("base64") && mes.mess.includes("data:image")) {
+                return <img style={{ width: "10rem", height: "10rem" }} src={mes.mess} alt="" />
+            }
+            if (mes.mess.includes("base64") && mes.mess.includes("data:video")) {
+                return <video controls style={{ width: "10rem", height: "10rem" }} src={mes.mess}></video>
+            }
+
+        } else return <p className="small p-2 me-3 mb-1 rounded-3">{mes.user.fullname}: {mes.mess}</p>
     }
     return (
         <>
@@ -134,8 +225,13 @@ const Livechat = () => {
                                                         mes?.user?.fullname != "supporter" ?
                                                             (<div className="d-flex flex-row justify-content-end mb-4 pt-1">
                                                                 <div>
-                                                                    <p className="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">{mes?.user?.fullname}: {mes?.mess}</p>
-
+                                                                    {mes.mess.includes("imgchat") || mes.mess.includes("videochat") ?
+                                                                        mes.mess.includes("imgchat") ?
+                                                                            <img style={{ width: "10rem", height: "10rem" }} src={mes.mess.includes("imgchat") ? `${process.env.REACT_APP_URL_FETCH}/public/img/${mes.mess}` : mes.mess} alt="" />
+                                                                            : <video controls style={{ width: "10rem", height: "10rem" }} src={`${process.env.REACT_APP_URL_FETCH}/public/img/${mes.mess}`}></video>
+                                                                        :
+                                                                        <p className="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">{mes?.user?.fullname}: {mes?.mess}</p>
+                                                                    }
                                                                 </div>
                                                                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava4-bg.webp" alt="avatar 1" style={{ width: 45, height: '100%' }} />
                                                             </div>)
@@ -143,7 +239,9 @@ const Livechat = () => {
                                                             (<div className="d-flex flex-row justify-content-start mb-4">
                                                                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp" alt="avatar 1" style={{ width: 45, height: '100%' }} />
                                                                 <div>
-                                                                    <p className="small p-2 ms-3 mb-1 rounded-3" style={{ backgroundColor: '#f5f6f7' }}>Supporter: {mes?.mess}</p>
+                                                                    {
+                                                                        rendercontent(mes)
+                                                                    }
                                                                 </div>
                                                             </div>)
 
@@ -151,12 +249,26 @@ const Livechat = () => {
                                                 }
                                             </ScrollToBottom>
                                         </div>
+                                        {
+                                            statecheckemoji &&
+                                            <div className='emoji-section'>
+                                                <div className='emoji'>
+                                                    {
+                                                        emojis.map(e => <span onClick={() => senemoji(e)} >{e}</span>)
+                                                    }
+
+                                                </div>
+
+                                            </div>
+                                        }
                                         <div className="card-footer text-muted d-flex justify-content-start align-items-center p-3">
                                             <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp" alt="avatar 3" style={{ width: 40, height: '100%' }} />
                                             <input onKeyDown={keydownhandler} value={stateinput} onChange={(e) => setinput(e.target.value)} type="text" className="form-control form-control-lg" id="exampleFormControlInput1" placeholder="Enter message!" />
-                                            <a className="ms-1 text-muted" href="#!"><FontAwesomeIcon icon="fa-solid fa-paperclip" /></a>
-                                            <a className="ms-3 text-muted" href="#!"><FontAwesomeIcon icon="fa-solid fa-face-smile" /></a>
-                                            <a className="ms-3" onClick={sentmesshandler}><FontAwesomeIcon icon="fa-solid fa-paper-plane" /></a>
+                                            <input ref={refimg} onChange={changeuploadfile} type="file" accept="image/*" style={{ display: "none" }} />
+                                            <FontAwesomeIcon onClick={() => refimg.current.click()} style={{ marginLeft: " 0.5rem" }} icon="fa-solid fa-paperclip" >
+                                            </FontAwesomeIcon>
+                                            <FontAwesomeIcon onClick={() => setcheckemoji((prev) => !prev)} style={{ margin: "auto 0.5rem" }} icon="fa-solid fa-face-smile" />
+                                            <FontAwesomeIcon onClick={sentmesshandler} icon="fa-solid fa-paper-plane" />
                                         </div>
                                     </div>
                                 </section>
