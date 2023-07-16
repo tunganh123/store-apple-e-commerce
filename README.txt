@@ -5,6 +5,7 @@ tkuser: louistunganh@gmail.com || 123456789
 
 •	Function: 
 - Authentication and authorization with JWT
+- Pagination
 -	Decentralization admin, user, supporter
 -	Admin can CRUD product, Upload multiple file
 -	User can view detail product, place order, 
