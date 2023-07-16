@@ -41,12 +41,13 @@ const upload = multer({
   fileFilter: fileFilter,
   // limits: { files: 4 },
 }).array("img", 4);
+
 const uploadimgchat = multer({
   storage: storagechat,
   fileFilter: fileFilter,
-  limits: { fileSize: 20 * 1024 * 1024 }, // Giới hạn dung lượng tệp là 20MB
+  // limits: { fileSize: 20 * 1024 * 1024 }, // Giới hạn dung lượng tệp là 20MB
 }).single("imgchat");
-// exports.upload = upload;
+exports.upload = upload;
 
 const getalltransaction = async (req, res) => {
   try {
@@ -58,6 +59,7 @@ const getalltransaction = async (req, res) => {
       usercount: usercount,
     });
   } catch (error) {
+    res.json(error);
     console.log(error);
   }
 };
@@ -85,6 +87,7 @@ const addproduct = async (req, res) => {
         objimg[`img${i}`] = item.path;
         i++;
       });
+
       const productitem = new Product({
         ...data,
         short_desc: data.shortdesc,
@@ -108,7 +111,7 @@ const detailproduct = async (req, res) => {
     const productitem = await Product.findById(idproduct);
     res.status(200).json(productitem);
   } catch (error) {
-    console.log(error);
+    res.json(error);
   }
 };
 const updatedetail = async (req, res) => {
@@ -118,8 +121,9 @@ const updatedetail = async (req, res) => {
     if (!productitem) {
       throw new Error({ err: "Update Loi" });
     }
+    res.json({ ok: "ok" });
   } catch (error) {
-    console.log(error);
+    res.json(error);
   }
 };
 const deletedetail = async (req, res) => {
@@ -129,7 +133,9 @@ const deletedetail = async (req, res) => {
     if (!productitem) {
       throw new Error({ err: "Delete Loi" });
     }
+    res.json({ ok: "ok" });
   } catch (error) {
+    res.json(error);
     console.log(error);
   }
 };
@@ -148,7 +154,10 @@ const adminlogin = async (req, res) => {
       });
     }
     if (resultadmin) {
-      const bolen = bcrypt.compare(datauser.password, resultadmin.password);
+      const bolen = await bcrypt.compare(
+        datauser.password,
+        resultadmin.password
+      );
       if (bolen) {
         const token = jwt.sign(
           {
@@ -158,18 +167,13 @@ const adminlogin = async (req, res) => {
           },
           "privateadmin"
         );
-        // res.cookie("tokenadmin", token, {
-        //   httpOnly: false,
-        //   secure: true,
-        //   sameSite: "none",
-        // });
         res.status(200).json({ token: token });
-      } else throw new Error();
+      } else throw new Error("Sai mật khẩu");
     } else {
-      throw new Error();
+      throw new Error("Không tồn tại email");
     }
   } catch (error) {
-    res.status(400).json();
+    res.status(400).json({ err: error.message });
   }
 };
 const adminlogout = async (req, res) => {
@@ -208,6 +212,7 @@ const saveimgchat = async (req, res) => {
       }
       res.json({ a: "b" });
     } catch (error) {
+      console.log(err);
       res.json({ err: error.message });
     }
   });

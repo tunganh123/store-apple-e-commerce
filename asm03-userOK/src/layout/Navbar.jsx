@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import "./Navbar.css"
 import { useDispatch, useSelector } from "react-redux"
 import Statelogin from '../store/Statelogin';
-import Footer from './Footer';
 import { useCookies } from 'react-cookie';
 const Navbar = () => {
     const [cookies, setCookie, removeCookie] = useCookies(['token']);
@@ -37,6 +36,7 @@ const Navbar = () => {
                         <NavLink to="/">Home</NavLink>
                         <NavLink to="/shop">Shop</NavLink>
                     </div>
+                    <h2 >BOUTIQUE</h2>
                     <div>
                         {
                             userlogin && <NavLink to="/history">History </NavLink>
@@ -48,10 +48,8 @@ const Navbar = () => {
                         }
                     </div>
                 </div>
-                <h2 className='nameshop'>BOUTIQUE</h2>
+
             </div>
-            <Outlet />
-            <Footer />
         </>
     )
 }

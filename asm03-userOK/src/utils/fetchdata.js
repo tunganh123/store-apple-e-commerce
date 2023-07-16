@@ -1,4 +1,4 @@
-import { url_be } from "..";
+import { url_be } from "./linkconstant";
 export const Fetchdata = async (value, path, tokennn) => {
   try {
     const a = await fetch(`${url_be}/${path}`, {

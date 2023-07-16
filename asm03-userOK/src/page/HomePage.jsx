@@ -1,10 +1,9 @@
 import React from 'react';
 import "./pagecss/Homepage.css"
-import { linkfetch } from '..';
-import Bannerhomepage from './Homepage/Bannerhomepage';
-import Typeproduct from './Homepage/Typeproduct';
-import Listproduct from './Homepage/Listproduct';
-import More from './Homepage/More';
+import Bannerhomepage from '../features/Homepage/Bannerhomepage';
+import Typeproduct from '../features/Homepage/Typeproduct';
+import Listproduct from '../features/Homepage/Listproduct';
+import More from '../features/Homepage/More';
 const HomePage = () => {
     return (
         <>
@@ -26,12 +25,3 @@ const HomePage = () => {
     )
 }
 export default HomePage;
-export const fetchdata = async () => {
-    const response = await fetch(linkfetch, {
-        headers: {
-            //"Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
-        }
-    },)
-    return response
-}

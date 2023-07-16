@@ -7,7 +7,7 @@ let initUser = "";
 let token = getCookie("token");
 if (token) {
   let userlivenow = jwt_decode(token);
-  initUser = userlivenow;
+  initUser = { ...userlivenow, token: token };
 }
 // Tạo slice lưu thông tin người đang đăng nhập
 const Statelogin = createSlice({

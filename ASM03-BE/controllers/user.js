@@ -10,17 +10,19 @@ exports.register = async (req, res) => {
       const passok = await bcrypt.hash(datauser.password, 12);
       const usersv = new User({
         ...datauser,
+        role: "client",
         password: passok,
       });
       const sv = await usersv.save();
       if (!sv) {
         throw new Error("Save Err");
       }
+      res.status(200).json({ ok: "Lưu thành công" });
     } else {
       return res.json({ err: "Trùng email" });
     }
-    res.status(200).json({ ok: "Lưu thành công" });
   } catch (error) {
+    res.json({ a: "b" });
     console.log(error);
   }
 
@@ -70,6 +72,7 @@ exports.logout = async (req, res) => {
     res.clearCookie("token");
     res.end();
   } catch (error) {
+    res.json(error);
     console.log(error);
   }
 };

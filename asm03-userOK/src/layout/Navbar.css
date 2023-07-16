@@ -17,12 +17,6 @@
     margin: 5px;
 }
 
-.nameshop {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
 
 #navbarr a.active {
     color: rgb(231, 179, 36);
