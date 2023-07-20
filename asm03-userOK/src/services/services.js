@@ -10,8 +10,6 @@ import { useDispatch } from "react-redux";
 import Statelogin from "../store/Statelogin";
 
 const fetchdata = async (url, datapost, token) => {
-  console.log(token);
-  console.log(datapost);
   const a = await fetch(`${url_be}/${url}`, {
     method: "POST",
     body: JSON.stringify(datapost),
@@ -77,7 +75,9 @@ export const LoginMutate = () => {
     mutationFn: (datapost) => fetchdata("login", datapost),
     onSuccess: async ({ b }) => {
       toast.success("SUCCESS LOGIN");
-      setCookie("token", b.token);
+      setCookie("token", b.token, {
+        HttpOnly: true,
+      });
       const resultvalue = jwt_decode(b.token);
       dispatch(action.login({ ...resultvalue, token: b.token }));
       navi("/");

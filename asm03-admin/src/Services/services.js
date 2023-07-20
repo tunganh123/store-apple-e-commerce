@@ -94,7 +94,7 @@ export const LoginMutate = () => {
           fullname: value.fullname,
           token: result.token,
         };
-        setCookie("tokenadmin", result.token);
+        setCookie("tokenadmin", result.token, { HttpOnly: true });
         dispatch(action.updateadmin(dataadmin));
         navi("/dashboard");
       }
